@@ -1,0 +1,12 @@
+{
+	"displays": ["DVI-D-1", "DVI-D-2", "HDMI-A-1", "none"],
+	"clip": {
+		"min": 300,
+		"max": 750
+	},
+	"epochs": 13,
+	"resize": {
+		"width": 28,
+		"height": 28
+	}
+}
