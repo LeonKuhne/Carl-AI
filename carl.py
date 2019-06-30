@@ -12,17 +12,18 @@ parser = ArgumentParser(description="carl promises to be good boy")
 parser.add_argument('-f', '--file', help="file to save to, otherwise uses recent")
 args = parser.parse_args()
 
-# config
-config = util.read_config()
-MODEL_NAME = f"carlv1-{config['epochs']}-{int(time.time())}"
-tensorboard = TensorBoard(log_dir=f"logs/{MODEL_NAME}")
-
-# get the data
+# get name
 name = "recent"
 if args.file:
     name = args.file
 (x, y) = util.get_data(name)
 
+# config
+config = util.read_config()
+MODEL_NAME = f"carl-{config['type']}:{config['version']}-{name}-{config['epochs']}-{int(time.time())}"
+tensorboard = TensorBoard(log_dir=f"logs/{MODEL_NAME}")
+
+# get the data
 print('Raw Data:')
 print(x.shape)
 print(y.shape)
