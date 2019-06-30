@@ -73,7 +73,6 @@ def collect_data(start_x, start_y):
     x_train = x_train.reshape([-1, 28, 28, 1])
    
     # turn the array into a matrix (one-hot encoding)
-    print(y_train)
     y_train = to_categorical(y_train)
 
     return (x_train, y_train)
