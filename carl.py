@@ -1,7 +1,7 @@
 import util
 import time
 from keras.models import Sequential
-from keras.layers import Conv2D, BatchNormalization, Dense, MaxPooling2D, Flatten, LSTM
+from keras.layers import Conv2D, BatchNormalization, Dense, MaxPooling2D, Flatten, LSTM, Embedding
 from keras.layers.convolutional_recurrent import ConvLSTM2D
 from keras.utils import to_categorical
 from keras.callbacks import EarlyStopping, TensorBoard
@@ -51,16 +51,15 @@ model = Sequential()
 # filters is number of segments (of picture), kernal_size is the size of the filter
 model.add(Conv2D(filters=32, kernel_size=(3,3), activation='relu', input_shape=(28, 28, 1)))
 #model.add(BatchNormalization())
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(Conv2D(37, (3, 3), activation='relu'))
-model.add(Conv2D(150, (3, 3), activation='relu'))
-model.add(Conv2D(29, (3, 3), activation='relu'))
+#model.add(Conv2D(64, (3, 3), activation='relu'))
+#model.add(Conv2D(37, (3, 3), activation='relu'))
+#model.add(Conv2D(150, (3, 3), activation='relu'))
+#model.add(Conv2D(128, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2,2)))
-
 model.add(Flatten())
-model.add(Dense(128, activation='relu'))
+model.add(LSTM(128))
+#model.add(Dense(128, activation='relu'))
 model.add(Dense(len(config['displays']), activation='softmax'))
-
 
 # compile
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) #cnn

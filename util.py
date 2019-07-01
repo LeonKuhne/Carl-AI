@@ -36,7 +36,10 @@ def save_data(name, x, y):
     save_file(f"{name}.ydata", y)
 
 def get_frame():
-    frame = get_depth()[0] # get current frame from connect
+    frame_data = get_depth()
+    frame = frame_data[0] # get current frame from connect
+    timestamp = frame_data[1]
+
     frame = np.clip(frame, frame_clip_min, frame_clip_max)
     frame = frame - frame_clip_min
     frame = cv2.resize(frame, dsize=(frame_width, frame_height)) # resize the image to 28x28
