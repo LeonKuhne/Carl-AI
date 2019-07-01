@@ -49,7 +49,7 @@ print(y_val.shape)
 # create the model
 model = Sequential()
 # filters is number of segments (of picture), kernal_size is the size of the filter
-model.add(Conv2D(filters=32, kernel_size=(3,3), activation='relu', input_shape=(28, 28, 1)))
+model.add(Conv2D(filters=32, kernel_size=(3,3), activation='relu', input_shape=(None, len(x_train), 28, 28, 1)))
 #model.add(BatchNormalization())
 #model.add(Conv2D(64, (3, 3), activation='relu'))
 #model.add(Conv2D(37, (3, 3), activation='relu'))
