@@ -7,6 +7,8 @@ import json
 
 config = util.read_config()
 DISPLAY = config['displays']
+width = config['resize']['width']
+height = config['resize']['height']
 MODEL_NAME = "carl.model"
 frame_count = 1000
 
@@ -32,7 +34,9 @@ for i in range(frame_count):
     x = np.asarray(frame_batch)
     
     # reshape
-    x = np.reshape(x, [-1, nTimesteps, 28, 28, 1]) # -1 infers
+    print(x.shape)
+    x = np.reshape(x, [1, -1, width, height, 1]) # -1 infers
+    print(x.shape)
 
     # predict
     prediction = int(model.predict_classes(x)[0])

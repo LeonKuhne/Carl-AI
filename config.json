@@ -11,6 +11,6 @@
 		"width": 46,
 		"height": 46
 	},
-	"timesteps": 10,
-	"learning_rate": 0.0001
+	"timesteps": 5,
+	"learning_rate": 0.001
 }
