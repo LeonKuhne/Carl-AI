@@ -53,5 +53,11 @@ def get_display():
         if(display['focused']):
             return display['output']
 
-if __name__ == '__main__':
-    get_display()
+def frame_batch(timesteps):
+    batch = []
+    for i in range(timesteps):
+        batch.append(get_frame())
+    batch = np.asarray(batch)
+    return batch
+
+

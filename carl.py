@@ -1,9 +1,11 @@
 import util
 import time
+import matplotlib.pyplot as plt
 from keras.models import Sequential
 from keras.layers import Conv2D, BatchNormalization, Dense, MaxPooling2D, Flatten, LSTM, Embedding
 from keras.layers.convolutional_recurrent import ConvLSTM2D
 from keras.utils import to_categorical
+from keras.optimizers import RMSprop, Adam
 from keras.callbacks import EarlyStopping, TensorBoard
 from sklearn.model_selection import train_test_split
 from argparse import ArgumentParser
@@ -12,32 +14,43 @@ from argparse import ArgumentParser
 parser = ArgumentParser(description="carl promises to be good boy")
 parser.add_argument('-f', '--file', help="file to save to, otherwise uses recent")
 parser.add_argument('-l', '--log', help="log comment, default is timestamp")
+parser.add_argument('-e', '--epochs', help="specify num of epochs")
+parser.add_argument('-lr', '--learning_rate', help="specify learning rate")
 args = parser.parse_args()
 
-# get name
+# config
+config = util.read_config()
+nTimesteps = config['timesteps']
+width = config['resize']['width']
+height = config['resize']['height']
+learning_rate = config['learning_rate']
+
+# parse args
 name = "recent"
 log_comment = int(time.time())
+epochs = config['epochs']
 if args.file:
     name = args.file
 if args.log:
     log_comment = args.log
-(x, y) = util.get_data(name)
+if args.epochs:
+    epochs = int(args.epochs)
+if args.learning_rate:
+    learning_rate = float(args.learning_rate)
 
-# config
-config = util.read_config()
-MODEL_NAME = f"carl-{config['type']}:{config['version']}-{name}-{config['epochs']}-{log_comment}"
-tensorboard = TensorBoard(log_dir=f"logs/{MODEL_NAME}")
+# logging
+model_name = f"carl-{config['type']}:{config['version']}-{name}-{epochs}-{log_comment}"
+tensorboard = TensorBoard(log_dir=f"logs/{model_name}")
 
 # get the data
+(x, y) = util.get_data(name)
 print('Raw Data:')
 print(x.shape)
 print(y.shape)
 
 # create validation and training set
-#x_train, x_val, y_train, y_val = train_test_split(x, y, random_state=7, test_size=0.2) #cnn
-x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2, shuffle=False) #rnn
-
-# TODO create multiple 'video' training sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=7, test_size=0.2) #cnn
+#x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=False) #rnn
 
 # print some neat details
 print('Training Data:')
@@ -45,36 +58,43 @@ print(x_train.shape)
 print(y_train.shape)
 
 print('Validation Data:')
-print(x_val.shape)
-print(y_val.shape)
+print(x_test.shape)
+print(y_test.shape)
+
 
 # create the model
 model = Sequential()
 # filters is number of segments (of picture), kernal_size is the size of the filter
-model.add(ConvLSTM2D(filters=32, kernel_size=(3,3), activation='relu', input_shape=(None, 28, 28, 1)))
+# input shape: num sequences, timesteps, data dimension
+input_shape = (None, nTimesteps, width, height, 1)
+model.add(ConvLSTM2D(filters=32, kernel_size=(3,3), activation='relu', batch_input_shape=input_shape))
 model.add(BatchNormalization())
-#model.add(Conv2D(64, (3, 3), activation='relu'))
-#model.add(Conv2D(37, (3, 3), activation='relu'))
+#model.add(Conv2D(500, (3, 3), activation='relu'))
+#model.add(MaxPooling2D(pool_size=(2,2)))
+#model.add(Conv2D(300, (3, 3), activation='relu'))
+#model.add(MaxPooling2D(pool_size=(2,2)))
 #model.add(Conv2D(150, (3, 3), activation='relu'))
 #model.add(Conv2D(128, (3, 3), activation='relu'))
-#model.add(MaxPooling2D(pool_size=(2,2)))
-#model.add(Flatten())
+model.add(Flatten())
 #model.add(LSTM(128))
-#model.add(Dense(128, activation='relu'))
+model.add(Dense(128, activation='relu'))
 model.add(Dense(len(config['displays']), activation='softmax'))
 
 # compile
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) #cnn
-# TODO
+optimizer = RMSprop(lr=learning_rate)
+model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy']) #cnn
 #model.compile(loss='categorical_crossentropy', optimizer='RMSprop', metrics=['accuracy']) #rnn
 
 # train
 #cbk_early_stopping = EarlyStopping(monitor='val_acc', mode='max')
-#model.fit(x_train, y_train, epochs=100, validation_data=(x_val, y_val), callbacks=[cbk_early_stopping])
-model.fit(x_train, y_train, epochs=config['epochs'], validation_data=(x_val, y_val), callbacks=[tensorboard])
+#model.fit(x_train, y_train, epochs=100, validation_data=(x_test, y_test), callbacks=[cbk_early_stopping])
+history = model.fit(x_train, y_train, epochs=epochs, validation_data=(x_test, y_test), callbacks=[tensorboard])
 
-# save
-model.save(f"models/{MODEL_NAME}.model")
+# show loss
+plt.plot(history.history['loss'])
+plt.show()
+
+model.save(f"models/{model_name}.model")
 model.save(f"recent.model")
 
 isDone = False

@@ -1,6 +1,6 @@
 {
 	"version": "v1",
-	"type": "cnn",
+	"type": "rnn",
 	"displays": ["DVI-D-1", "DVI-D-2", "HDMI-A-1", "none"],
 	"clip": {
 		"min": 300,
@@ -8,7 +8,9 @@
 	},
 	"epochs": 13,
 	"resize": {
-		"width": 28,
-		"height": 28
-	}
+		"width": 46,
+		"height": 46
+	},
+	"timesteps": 10,
+	"learning_rate": 0.0001
 }

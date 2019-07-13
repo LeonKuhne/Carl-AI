@@ -24,14 +24,15 @@ if args.duration:
 model = load_model(MODEL_NAME)
 
 currDisplayId = 0
+nTimesteps = config['timesteps']
 
 for i in range(frame_count):
     # get some data
-    frame = util.get_frame()
-    x = np.asarray([frame])
-
+    frame_batch = util.frame_batch(nTimesteps)
+    x = np.asarray(frame_batch)
+    
     # reshape
-    x = x.reshape([-1, 28, 28, 1])
+    x = np.reshape(x, [-1, nTimesteps, 28, 28, 1]) # -1 infers
 
     # predict
     prediction = int(model.predict_classes(x)[0])

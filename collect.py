@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 from keras.utils import to_categorical
 from threading import Thread
 import os.path
+import math
 
 # config
 config = util.read_config()
@@ -38,42 +39,49 @@ def listen_to_input():
         else:
             print(f"unknown command '{command}'")
 
-def record_observation(start_frames, start_displays):
+def record_observation(start_frames, start_displays, nTimesteps):
     # record the user while he uses the displays
     print("\trecording...")
 
-    frames = start_frames.tolist()
+    videos = start_frames.tolist()
     displays = start_displays.tolist()
     while running:
-        # get the display
+        # get video
+        video = util.frame_batch(nTimesteps)
+        
+        # get display
         if paused:
             displayId = len(config['displays']) - 1 # no display
         else:
             display = util.get_display()
             displayId = config['displays'].index(display)
-        
-        # get the frame
-        frame = util.get_frame()
 
-        frames.append(frame.tolist())
+        videos.append(video)
         displays.append(displayId)
 
+    videos = np.asarray(videos)
+    displays = np.asarray(displays)
+
     print("\tdone")
-    return (np.asarray(frames), np.asarray(displays))
+    return videos, displays
 
 def collect_data(start_x, start_y):
+    nTimesteps = config['timesteps']
+    width = config['resize']['width']
+    height = config['resize']['height']
+
     # collect data of the user looking at the monitor
     waiting = Thread(target=listen_to_input)
     waiting.daemon = True
     waiting.start()
     
-    (x_train, y_train) = record_observation(start_x, start_y)
+    (x_train, y_train) = record_observation(start_x, start_y, nTimesteps)
+    print(x_train.shape)
 
     # reshape
-    x_train = x_train.reshape([-1, 28, 28, 1])
-   
-    # turn the array into a matrix (one-hot encoding)
-    y_train = to_categorical(y_train)
+    x_train = np.reshape(x_train, [-1, nTimesteps, width, height, 1]) # box last item
+    print(x_train.shape)
+    y_train = to_categorical(y_train) # one-hot encoding (turn into matrix)
 
     return (x_train, y_train)
 
