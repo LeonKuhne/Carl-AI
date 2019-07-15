@@ -39,7 +39,7 @@ if args.learning_rate:
     learning_rate = float(args.learning_rate)
 
 # logging
-model_name = f"carl-{config['type']}:{config['version']}-{name}-{epochs}-{log_comment}"
+model_name = f"carl-{config['type']}:{config['version']}-{name}-{epochs}-{learning_rate}-{log_comment}"
 tensorboard = TensorBoard(log_dir=f"logs/{model_name}")
 
 # get the data
@@ -67,14 +67,12 @@ model = Sequential()
 # filters is number of segments (of picture), kernal_size is the size of the filter
 # input shape: num sequences, timesteps, data dimension
 input_shape = (None, nTimesteps, width, height, 1)
-model.add(ConvLSTM2D(filters=32, kernel_size=(3,3), activation='relu', batch_input_shape=input_shape))
+model.add(ConvLSTM2D(filters=32, kernel_size=(3,3), activation='relu', batch_input_shape=input_shape, return_sequences=True))
+#for i in range(5):
+#    model.add(BatchNormalization())
+#    #model.add(MaxPooling2D(pool_size=(2,2)))
+#    model.add(ConvLSTM2D(2**(i+6), (3, 3), activation='relu', return_sequences=True))
 model.add(BatchNormalization())
-#model.add(Conv2D(500, (3, 3), activation='relu'))
-#model.add(MaxPooling2D(pool_size=(2,2)))
-#model.add(Conv2D(300, (3, 3), activation='relu'))
-#model.add(MaxPooling2D(pool_size=(2,2)))
-#model.add(Conv2D(150, (3, 3), activation='relu'))
-#model.add(Conv2D(128, (3, 3), activation='relu'))
 model.add(Flatten())
 #model.add(LSTM(128))
 model.add(Dense(128, activation='relu'))
@@ -88,7 +86,9 @@ model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['ac
 # train
 #cbk_early_stopping = EarlyStopping(monitor='val_acc', mode='max')
 #model.fit(x_train, y_train, epochs=100, validation_data=(x_test, y_test), callbacks=[cbk_early_stopping])
-history = model.fit(x_train, y_train, epochs=epochs, validation_data=(x_test, y_test), callbacks=[tensorboard])
+for i in range(epochs):
+    history = model.fit(x_train, y_train, epochs=i, validation_data=(x_test, y_test), callbacks=[tensorboard])
+    model.save("backups/{model_name}.model")
 
 # show loss
 plt.plot(history.history['loss'])

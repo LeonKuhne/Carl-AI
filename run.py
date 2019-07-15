@@ -34,9 +34,7 @@ for i in range(frame_count):
     x = np.asarray(frame_batch)
     
     # reshape
-    print(x.shape)
     x = np.reshape(x, [1, -1, width, height, 1]) # -1 infers
-    print(x.shape)
 
     # predict
     prediction = int(model.predict_classes(x)[0])

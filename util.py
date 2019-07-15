@@ -60,4 +60,5 @@ def frame_batch(timesteps):
     batch = np.asarray(batch)
     return batch
 
-
+if __name__ == '__main__':
+    print(get_display())

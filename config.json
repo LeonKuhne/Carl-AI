@@ -1,7 +1,7 @@
 {
 	"version": "v1",
 	"type": "rnn",
-	"displays": ["DVI-D-1", "DVI-D-2", "HDMI-A-1", "none"],
+	"displays": ["DVI-D-1", "DVI-D-2", "HDMI-A-1", "DP-1"],
 	"clip": {
 		"min": 300,
 		"max": 750
@@ -11,6 +11,6 @@
 		"width": 46,
 		"height": 46
 	},
-	"timesteps": 5,
-	"learning_rate": 0.001
+	"timesteps": 10,
+	"learning_rate": 0.00001
 }

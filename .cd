@@ -2,6 +2,4 @@ echo "start logs: 'tensorboard --logdir=logs'"
 echo "add a cronjob that keeps autosaving with 'geet autosave'"
 
 echo "CODE TODO"
-echo "instead of grouping frames, create overlapping videos"
-
-
+echo "save backups whilee running"
