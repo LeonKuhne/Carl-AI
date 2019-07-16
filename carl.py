@@ -1,14 +1,27 @@
 import util
 import time
 import matplotlib.pyplot as plt
+
+import tensorflow as tf
+#from keras.backend.tensorflow_backend import set_session
+#config = tf.ConfigProto()
+#config.gpu_options.per_process_gpu_memory_fraction = 0.3
+#set_session(tf.Session(config=config))
+
 from keras.models import Sequential
 from keras.layers import Conv2D, BatchNormalization, Dense, MaxPooling2D, Flatten, LSTM, Embedding
 from keras.layers.convolutional_recurrent import ConvLSTM2D
 from keras.utils import to_categorical
 from keras.optimizers import RMSprop, Adam
 from keras.callbacks import EarlyStopping, TensorBoard
+from keras.backend.tensorflow_backend import set_session
 from sklearn.model_selection import train_test_split
 from argparse import ArgumentParser
+
+
+#from keras import backend
+# limit cpu usage
+#backend.set_session(backend.tf.Session(config=backend.tf.ConfigProto(intra_op_parallelism_threads=32, inter_op_parallelism_threads=32)))
 
 # args
 parser = ArgumentParser(description="carl promises to be good boy")
@@ -24,6 +37,7 @@ nTimesteps = config['timesteps']
 width = config['resize']['width']
 height = config['resize']['height']
 learning_rate = config['learning_rate']
+BATCH_SIZE = 1
 
 # parse args
 name = "recent"
@@ -68,10 +82,10 @@ model = Sequential()
 # input shape: num sequences, timesteps, data dimension
 input_shape = (None, nTimesteps, width, height, 1)
 model.add(ConvLSTM2D(filters=32, kernel_size=(3,3), activation='relu', batch_input_shape=input_shape, return_sequences=True))
-#for i in range(5):
-#    model.add(BatchNormalization())
-#    #model.add(MaxPooling2D(pool_size=(2,2)))
-#    model.add(ConvLSTM2D(2**(i+6), (3, 3), activation='relu', return_sequences=True))
+for i in range(3):
+    model.add(BatchNormalization())
+    #model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(ConvLSTM2D(2**(i+6), (3, 3), activation='relu', return_sequences=True))
 model.add(BatchNormalization())
 model.add(Flatten())
 #model.add(LSTM(128))
@@ -87,7 +101,7 @@ model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['ac
 #cbk_early_stopping = EarlyStopping(monitor='val_acc', mode='max')
 #model.fit(x_train, y_train, epochs=100, validation_data=(x_test, y_test), callbacks=[cbk_early_stopping])
 for i in range(epochs):
-    history = model.fit(x_train, y_train, epochs=i, validation_data=(x_test, y_test), callbacks=[tensorboard])
+    history = model.fit(x_train, y_train, epochs=i, batch_size=BATCH_SIZE, validation_data=(x_test, y_test), callbacks=[tensorboard])
     model.save("backups/{model_name}.model")
 
 # show loss

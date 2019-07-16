@@ -23,7 +23,9 @@ if args.duration:
     frame_count = int(args.duration)
 
 
+print('loading model...')
 model = load_model(MODEL_NAME)
+print('model loaded')
 
 currDisplayId = 0
 nTimesteps = config['timesteps']

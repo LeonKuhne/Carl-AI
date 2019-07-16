@@ -2,4 +2,6 @@ echo "start logs: 'tensorboard --logdir=logs'"
 echo "add a cronjob that keeps autosaving with 'geet autosave'"
 
 echo "CODE TODO"
-echo "save backups whilee running"
+echo "run carl.py on recent, make sure its learning"
+echo "make carl learn during use"
+echo "run on 'amd gpu' to not hog ram the whole time"
