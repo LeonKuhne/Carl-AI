@@ -8,10 +8,10 @@ Carl is an AI that learns what monitor you're looking at using depth vision data
 - > mkdir models
 
 ### Run
-- collect.py [-a <collection-name>] # collect user data
+- collect.py # collect user data
 - carl.py # train model on collected data
 - run.py # use trained model to predict viewed display, focus to display
-- view.py # show a color interperetation of the depth video footage that is being collected 
+- view.py # show a color interperetation of the live depth video footage
 
 ### Testing
 - LSTM implementation; Carl learns recurrently, taking in a sequence of frames per evaluation.
