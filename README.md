@@ -5,7 +5,7 @@ Carl is an AI that learns what monitor you're looking at using depth vision data
 
 ### Setup Istructions
 - Install libfreenect
--> mkdir models
+- > mkdir models
 
 ### Run
 - collect.py [-a <collection-name>] # collect user data
