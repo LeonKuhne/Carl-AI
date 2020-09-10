@@ -58,6 +58,7 @@ while True:
     fps_text = "FPS: {0:.2f}".format(fpsClock.get_fps())
 
     # get sensor data
+    print(get_depth())
     depth = np.rot90(get_depth()[0]) # get the depth readings from the camera
         
     # capture the contour at 2100

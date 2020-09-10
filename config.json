@@ -1,7 +1,7 @@
 {
 	"version": "v1",
 	"type": "cnn",
-	"displays": ["DVI-D-1", "DVI-D-2", "HDMI-A-1", "none"],
+	"displays": ["DVI-D-1", "DVI-D-2", "DP-1"],
 	"clip": {
 		"min": 300,
 		"max": 750
