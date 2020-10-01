@@ -6,7 +6,7 @@
 		"min": 300,
 		"max": 750
 	},
-	"epochs": 13,
+	"epochs": 7,
 	"resize": {
 		"width": 28,
 		"height": 28

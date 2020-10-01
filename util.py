@@ -29,10 +29,6 @@ def save_file(filename, npArr):
 def get_data(name):
     x = get_file(f"{name}.xdata")
     y = get_file(f"{name}.ydata")
-
-    # convert back from categorical to number list
-    y = np.argmax(y, axis=1)
-
     return x, y
 
 def save_data(name, x, y):

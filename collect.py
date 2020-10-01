@@ -44,6 +44,7 @@ def record_observation(start_frames, start_displays):
 
     frames = start_frames.tolist()
     displays = start_displays.tolist()
+
     while running:
         # get the display
         if paused:
@@ -52,14 +53,13 @@ def record_observation(start_frames, start_displays):
             display = util.get_display()
             displayId = config['displays'].index(display)
         
-        # get the frame
         frame = util.get_frame()
 
         frames.append(frame.tolist())
         displays.append(displayId)
 
     print("\tdone")
-    return (np.asarray(frames), np.asarray(displays))
+    return (np.array(frames), np.array(displays))
 
 def collect_data(start_x, start_y):
     # collect data of the user looking at the monitor
@@ -89,6 +89,12 @@ if __name__ == '__main__':
         saveName = args.append
         if os.path.isfile(f"data/{saveName}.xdata"): # file exists
             (start_x, start_y) = util.get_data(saveName)
+            
+            # fix shape
+            start_x = start_x.reshape([-1, 28, 28])
+            # convert back from categorical to number list
+            start_y = np.argmax(start_y, axis=1)
+
     print("\tdone")
     
     # collect

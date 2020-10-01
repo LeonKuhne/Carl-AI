@@ -1,2 +1,3 @@
+echo "train the model when I'm sleeping"
 echo "start logs: 'tensorboard --logdir=logs'"
-echo "add a cronjob that keeps autosaving with 'geet autosave'"
+echo "todo; add a cronjob that keeps autosaving with 'geet autosave'"
